@@ -54,6 +54,10 @@ public static class Program
 		                  "This should be set true when and ONLY when just using this tool as a game backend manager, instead of a game player. (Y/n)");
 		bool showCorrectAnswers = (Console.ReadLine() ?? string.Empty).Trim().ToLower() != "n";
 		
+		Console.WriteLine("Add the revealed letter EVEN THOUGH the letter doesn't exist in any song title?\n" + 
+		                  "By enabling this feature, the revealed letter list will act better as a hint list, which was widely used in the real game chat before. (Y/n)");
+		bool preserveAnyRevealedLetter = (Console.ReadLine() ?? string.Empty).Trim().ToLower() != "n";
+		
 		Console.WriteLine("Please check the following song list for the game session:");
 		for (int i = 0; i < songs.Count; i++)
 		{
@@ -67,13 +71,14 @@ public static class Program
 		Console.WriteLine($"If check correct, press any key to start the game session. ({songs.Count} songs)");
 		Console.ReadKey(true);
 		
-		GameMain(songs, showCorrectAnswers);
+		GameMain(songs, revealSpacesInitially, showCorrectAnswers, preserveAnyRevealedLetter);
 	}
 
-	private static void GameMain(IReadOnlyList<Song> songs, bool showCorrectAnswers)
+	private static void GameMain(IReadOnlyList<Song> songs, bool revealSpacesInitially, bool showCorrectAnswers, bool preserveAnyRevealedLetter)
 	{
 		bool gameFinished = false;
 		var revealedChars = new HashSet<string>();
+		if (revealSpacesInitially) revealedChars.Add("<空格>");
 		var stopwatch = Stopwatch.StartNew();
 		for (int round = 1; ; round++)
 		{
@@ -164,14 +169,22 @@ public static class Program
 					gameFinished = true;
 					continue; // directly continue to show the game final result
 				}
-				if (revealResult.All(result => result != RevealResult.Success) && revealResult.Any(result => result == RevealResult.NotInTitle))
+				string shownLetter = letter == ' ' ? "<空格>" : letter.ToString();
+				if (revealedChars.Contains(letter.ToString()) || (letter == ' ' && revealedChars.Contains("<空格>")))
 				{
-					// 没有成功的记录，并且至少有一个报错“不在标题中”
-					Console.WriteLine($"The letter {letter} is not in any song title. Any key continue.");
+					Console.WriteLine($"The letter {shownLetter} has already been revealed. Any key continue.");
 					Console.ReadKey(true);
 					continue;
 				}
-				revealedChars.Add(letter == ' ' ? "<空格>" : letter.ToString());
+				if (revealResult.All(result => result != RevealResult.Success) && revealResult.Any(result => result == RevealResult.NotInTitle))
+				{
+					// 没有成功的记录，并且至少有一个报错“不在标题中”
+					Console.WriteLine($"The letter {shownLetter} is not in any song title. Any key continue.");
+					Console.ReadKey(true);
+					if (preserveAnyRevealedLetter) revealedChars.Add(shownLetter);
+					continue;
+				} 
+				revealedChars.Add(shownLetter);
 			}
 			#endregion
 		}
