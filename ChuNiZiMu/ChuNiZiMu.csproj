@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>chunizimu</AssemblyName>
+        <AssemblyTitle>Chu Ni Zi Mu - 音游开字母游戏辅助工具</AssemblyTitle>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Configurations>Release;Debug</Configurations>
+        <Platforms>x64;arm64</Platforms>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <PublishAot>true</PublishAot>
+        <Version>0.1.1</Version>
+        <Company>Misaka Castle</Company>
+        <Copyright>(C)Copyright 2018-2024 Misaka Castle and Project Chunizimu contributors. All rights reserved.</Copyright>
+    </PropertyGroup>
+
+</Project>
