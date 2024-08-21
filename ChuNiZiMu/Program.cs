@@ -134,17 +134,17 @@ public static class Program
 			#region Game Menu and Input logics
 			Console.BackgroundColor = ConsoleColor.DarkBlue;
 			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine("<single char>: reveal, d <num>: directly complete a song, q: quit");
+			Console.WriteLine("<single char> - reveal, :d <num> - directly complete a song, :q - quit");
 			Console.Write("Input: ");
 
 			string option = Console.ReadLine() ?? string.Empty;
 			option = option.ToLower(); // 注意这里千万不能直接Trim，因为Trim会把空格也去掉，而有可能玩家此时目的就是开<空格>这个字符
-			if (option.StartsWith('d') && option.Split(' ').Length > 1 && uint.TryParse(option.Split(' ')[1], out uint num) && num <= songs.Count)
+			if (option.StartsWith(":d") && option.Split(' ').Length > 1 && uint.TryParse(option.Split(' ')[1], out uint num) && num <= songs.Count)
 			{
 				var targetSong = songs[(int) num - 1];
 				targetSong.RevealAll();
 			}
-			else if (option == "q")
+			else if (option == ":q")
 			{
 				Console.WriteLine("Game quit.");
 				return;
