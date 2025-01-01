@@ -15,15 +15,17 @@ public class Song
 	/// <summary>
 	/// 该曲目是否为Bonus曲目。
 	/// </summary>
-	bool BonusSong = false;
+	public bool IsBonusSong { get; set; }
+	
     /// <summary>
     /// 该曲目是否含有ascii字符以外的元素。
     /// </summary>
-	bool Non_ASCII_Characters = false;
+    public bool IsNonASCIICharacters { get; init; }
+    
 	/// <summary>
 	/// 该曲目是否受到特殊效果影响。
 	/// </summary>
-	bool Affected = false;
+	public bool Affected { get; init; }
 
     /// <summary>
     /// 该曲目当前已揭露的曲名。(初始状态下为全问号；如果设置了<c>revealSpacesInitially = true</c>，则初始状态下除空格外的字符均为问号)
@@ -40,14 +42,7 @@ public class Song
 	{
 		FullSecretSongTitle = title;
 		HiddenSongTitle = new char[title.Length];
-		for (int i = 0 ; i < title.Length; i++) // 检测是否包括非ascii字符
-		{
-			if (!Char.IsAscii(title[i]))
-			{
-				this.Non_ASCII_Characters = true;
-				break;
-			}
-		}
+		IsNonASCIICharacters = title.Any(t => !char.IsAscii(t));
 		if (revealSpacesInitially)
 		{
 			for (int i = 0; i < title.Length; i++)
@@ -118,23 +113,6 @@ public class Song
 		HiddenSongTitle = FullSecretSongTitle.ToCharArray();
 	}
 
-	public void SetBonusFlag()
-	{
-		this.BonusSong = true;
-	}
-
-	public bool CheckBonusFlag()
-	{
-		return this.BonusSong;
-	}
-	public void SetAffectedFlag(bool flag)
-	{
-		this.Affected = flag;
-	}
-	public bool CheckNonAscii()
-	{
-		return this.Non_ASCII_Characters;
-	}
 	public override string ToString()
 	{
 		if (!HiddenSongTitle.Contains('?'))
