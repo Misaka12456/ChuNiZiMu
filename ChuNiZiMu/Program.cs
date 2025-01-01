@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 using ChuNiZiMu.Models;
 
 namespace ChuNiZiMu;
@@ -57,6 +58,46 @@ public static class Program
 		Console.WriteLine("Add the revealed letter EVEN THOUGH the letter doesn't exist in any song title?\n" + 
 		                  "By enabling this feature, the revealed letter list will act better as a hint list, which was widely used in the real game chat before. (Y/n)");
 		bool preserveAnyRevealedLetter = (Console.ReadLine() ?? string.Empty).Trim().ToLower() != "n";
+
+		Console.WriteLine("Is there a Bonus track set? Bonus tracks will be highlighted in a special color. (y/N)");
+		bool bonusSetFlag = (Console.ReadLine() ?? string.Empty).Trim().ToLower() == "y";
+		while (bonusSetFlag)
+		{
+            Console.WriteLine("Please enter the Bonus track number and input a blank line or EOF to finish");
+            string? bonusString = Console.ReadLine();
+			if (bonusString == null ||bonusString.Length ==0)
+			{
+				Console.WriteLine("If you want to confirm that you don't set the bonus, please enter the enter again to confirm.");
+                string? confirmString = Console.ReadLine();
+				if (confirmString == null||confirmString.Length == 0)
+				{
+					break;
+				}
+            }
+			else
+			{
+				Regex regex = new Regex("[^0-9]+$");
+				if (regex.IsMatch(bonusString))
+				{
+                    Console.WriteLine("Error: You entered a character other than a number, please press enter key to re-enter");
+					continue;
+                }
+				else
+				{
+					int[] bonusList = Array.ConvertAll<string, int>(bonusString.Split(" "),s => int.Parse(s));
+					foreach (int bonusIndex in bonusList)
+					{
+						if(bonusIndex > songs.Count)
+						{
+							continue;
+						}
+						songs[bonusIndex - 1].SetBonusFlag();
+					}
+				}
+				break;
+            }
+        }
+
 		
 		Console.WriteLine("Please check the following song list for the game session:");
 		for (int i = 0; i < songs.Count; i++)
@@ -96,14 +137,32 @@ public static class Program
 				var song = songs[i];
 				if (song.ToString() == song.FullSecretSongTitle)
 				{
-					Console.ForegroundColor = ConsoleColor.Green; // completed
+					if(song.CheckBonusFlag())
+					{
+                        Console.ForegroundColor = ConsoleColor.Magenta; // bonus completed
+                    }
+					else
+					{
+                        Console.ForegroundColor = ConsoleColor.Green; // normal completed
+                    }
 					Console.WriteLine($"[{i + 1}] {song.FullSecretSongTitle}");
 					Console.ResetColor();
 				}
 				else
 				{
-					Console.WriteLine($"[{i + 1}] {new string(song.HiddenSongTitle)}");
-				}
+					if(song.CheckNonAscii())
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                    }
+                    else if (song.CheckBonusFlag())
+                    {
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                    }
+                    Console.Write($"[{i + 1}] ");
+                    Console.ResetColor();
+                    Console.WriteLine($"{new string(song.HiddenSongTitle)}");
+                    //Console.WriteLine($"[{i + 1}] {new string(song.HiddenSongTitle)}");
+                }
 			}
 			#endregion
 

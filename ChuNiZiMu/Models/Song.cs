@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace ChuNiZiMu.Models;
 
 /// <summary>
@@ -9,11 +11,24 @@ public class Song
 	/// 该曲目的完整曲名。
 	/// </summary>
 	public string FullSecretSongTitle { get; init; }
-	
+
 	/// <summary>
-	/// 该曲目当前已揭露的曲名。(初始状态下为全问号；如果设置了<c>revealSpacesInitially = true</c>，则初始状态下除空格外的字符均为问号)
+	/// 该曲目是否为Bonus曲目。
 	/// </summary>
-	public char[] HiddenSongTitle { get; private set; }
+	bool BonusSong = false;
+    /// <summary>
+    /// 该曲目是否含有ascii字符以外的元素。
+    /// </summary>
+	bool Non_ASCII_Characters = false;
+	/// <summary>
+	/// 该曲目是否受到特殊效果影响。
+	/// </summary>
+	bool Affected = false;
+
+    /// <summary>
+    /// 该曲目当前已揭露的曲名。(初始状态下为全问号；如果设置了<c>revealSpacesInitially = true</c>，则初始状态下除空格外的字符均为问号)
+    /// </summary>
+    public char[] HiddenSongTitle { get; private set; }
 	
 	/// <summary>
 	/// 该曲目当前已揭露的字符集合(仅存储曲目标题中存在的字符。如果<c>revealSpacesInitially = true</c>，则该集合初始化时即包含一个元素：空格)<br />
@@ -25,6 +40,14 @@ public class Song
 	{
 		FullSecretSongTitle = title;
 		HiddenSongTitle = new char[title.Length];
+		for (int i = 0 ; i < title.Length; i++) // 检测是否包括非ascii字符
+		{
+			if (!Char.IsAscii(title[i]))
+			{
+				this.Non_ASCII_Characters = true;
+				break;
+			}
+		}
 		if (revealSpacesInitially)
 		{
 			for (int i = 0; i < title.Length; i++)
@@ -95,6 +118,23 @@ public class Song
 		HiddenSongTitle = FullSecretSongTitle.ToCharArray();
 	}
 
+	public void SetBonusFlag()
+	{
+		this.BonusSong = true;
+	}
+
+	public bool CheckBonusFlag()
+	{
+		return this.BonusSong;
+	}
+	public void SetAffectedFlag(bool flag)
+	{
+		this.Affected = flag;
+	}
+	public bool CheckNonAscii()
+	{
+		return this.Non_ASCII_Characters;
+	}
 	public override string ToString()
 	{
 		if (!HiddenSongTitle.Contains('?'))
