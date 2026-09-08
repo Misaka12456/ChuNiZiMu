@@ -16,4 +16,8 @@
         <Copyright>(C)Copyright 2018-2025 Misaka Castle and Project Chunizimu contributors. All rights reserved.</Copyright>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Ookii.CommandLine" Version="5.0.0" />
+    </ItemGroup>
+
 </Project>
