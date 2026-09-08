@@ -36,12 +36,12 @@ public static class Program
 		Console.WriteLine("Welcome to Chu Ni Zi Mu, a tiny utility to manage the game which to guess the song name by the revealed characters in the song title.");
 		Console.WriteLine("Do you want to reveal spaces initially? This settings can only be set once before the game session starts. (y/N)");
 		bool revealSpacesInitially = (Console.ReadLine() ?? string.Empty).Trim().ToLower() == "y";
-		Console.WriteLine("To start the game session, please init the songs pool by input the song name once per line, and input a blank line or EOF to start the game session:");
+		Console.WriteLine("To start the game session, please init the songs pool by input the song name once per line, and input a blank line to start the game session:");
 		var songs = new List<Song>();
 		while (true)
 		{
 			string? songName = Console.ReadLine();
-			if (string.IsNullOrWhiteSpace(songName) || songName.Trim().Equals("eof", StringComparison.CurrentCultureIgnoreCase))
+			if (string.IsNullOrWhiteSpace(songName))
 			{
 				if (songs.Count < 2)
 				{
